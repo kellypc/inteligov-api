@@ -3,51 +3,27 @@ require "mechanize"
 class BillsService
   BASE_URL = "https://sapl.al.ac.leg.br/materia"
 
-  attr_accessor :agent, :url, :project_id
+  attr_accessor :agent, :url, :project_id, :page
 
   def initialize(project_id)
     @agent = Mechanize.new { |agent| agent.user_agent_alias = "Mac Safari" }
     @url = "#{BASE_URL}/#{project_id}"
+    @page = agent.get(url)
   end
 
   def get_new_project
-    fp = File.new("wikilinks.txt", "w")
-
-    html = agent.get(url).body
-
-    result = {
+    {
       "ext_id": project_id,
       "author": get_author,
       "kind": get_kind,
-      "number": "201",
-      "year": "2013",
-      "status": "APROVADO",
-      "description": "DISPÕE SOBRE A DOAÇÃO E A VENDA DE ÁREAS DE DOMÍNIO DA ADMINISTRAÇÃO PÚBLICA DIRETA E INDIRETA, PARA EFEITO DE REGULARIZAÇÃO FUNDIÁRIA DE INTERESSE SOCIAL.",
-      "steps": [
-        ["19/12/2013", "SAL", "Enviado para PE: Aprovado"],
-        [
-          "17/12/2013",
-          "SAL",
-          "Enviado para SAL: Distribuição às Comissões Tematicas"
-        ]
-      ],
-      "link": "https://sapl.al.ac.leg.br/media/sapl/public/materialegislativa/2013/4059/4059_texto_integral.pdf",
-      "introduction_date": "2013-12-17"
+      "number": get_number,
+      "year": get_year,
+      "status": get_status,
+      "description": get_description,
+      "steps": get_steps,
+      "link": get_link,
+      "introduction_date": get_date
     }
-
-    result
-
-    # html_doc = Nokogiri::HTML(html)
-    #
-    # fp.write("References\n\n")
-    #
-    # list = html_doc.xpath("//ol[@class='references']")
-    # list.each { |i| fp.write(i.text + "\n") }
-    #
-    # fp.write("Further Reading\n\n")
-    #
-    # list = html_doc.xpath("//span[@class='citation']")
-    # list.each { |i| fp.write(i.text + "\n") }
   end
 
   private
@@ -56,6 +32,51 @@ class BillsService
     page.at('table tr td').text.strip
   end
 
+  def get_status
+    page = agent.get("#{url}/tramitacao")
+    page.search('table tr')[1].search('td')[3].text.strip
+  end
+
   def get_kind
+    page.at('div .form-control-static').text.strip
+  end
+
+  def get_number
+    page.at('div #div_id_numero .form-control-static').text.strip
+  end
+
+  def get_year
+    page.at('div #div_id_ano .form-control-static').text.strip
+  end
+
+  def get_description
+    desc = page.at('div #div_id_ementa .form-control-static').text.strip
+    desc.gsub("\r", " ")
+  end
+
+  def get_link
+    link = page.at('#div_id_texto_original a').attributes["href"].value
+    "https://sapl.al.ac.leg.br#{link}"
+  end
+
+  def get_date
+    page.at('div #div_id_data_apresentacao .form-control-static').children.text.strip
+  end
+
+  def get_steps
+    page = agent.get("#{url}/tramitacao")
+    lines = page.search('table tr')
+
+    steps = []
+
+    lines.each_with_index do |line, index|
+      next if index == 0
+      date = line.search('td').first.text.strip
+      origin = line.search('td')[1].text.split("-").first.strip
+      destination = line.search('td')[2].text.split("-")[1].strip
+      steps << [date, origin, "#{destination}: #{get_status}"]
+    end
+
+    steps
   end
 end

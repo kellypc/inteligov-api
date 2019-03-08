@@ -30,6 +30,13 @@ RSpec.describe 'Projects API' do
     it 'returns the json for project' do
       expect(json_response[:author]).to eq("Governo - Governador")
       expect(json_response[:kind]).to eq("Projeto de Lei")
+      expect(json_response[:number]).to eq("201")
+      expect(json_response[:year]).to eq("2013")
+      expect(json_response[:status]).to eq("Aprovado")
+      expect(json_response[:description]).to eq("DISPÕE SOBRE A DOAÇÃO E A VENDA DE ÁREAS DE DOMÍNIO DA ADMINISTRAÇÃO PÚBLICA DIRETA E INDIRETA, PARA EFEITO DE REGULARIZAÇÃO FUNDIÁRIA DE INTERESSE SOCIAL.")
+      expect(json_response[:steps].size).to eq 2
+      expect(json_response[:link]).to eq "https://sapl.al.ac.leg.br/media/sapl/public/materialegislativa/2013/4059/4059_texto_integral.pdf"
+      expect(json_response[:introduction_date]).to eq "17/12/2013"
     end
   end
 
