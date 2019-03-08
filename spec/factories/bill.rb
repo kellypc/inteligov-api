@@ -1,5 +1,5 @@
 FactoryBot.define do
-	factory :project do
+	factory :bill do
 		author { Faker::Lorem.sentence }
 		description { Faker::Lorem.paragraph }
 	end

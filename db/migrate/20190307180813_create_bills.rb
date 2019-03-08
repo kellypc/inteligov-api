@@ -1,6 +1,6 @@
-class CreateProjects < ActiveRecord::Migration[5.0]
+class CreateBills < ActiveRecord::Migration[5.0]
   def change
-    create_table :projects do |t|
+    create_table :bills do |t|
       t.string :author
       t.string :ext_id
       t.string :kind
@@ -9,7 +9,8 @@ class CreateProjects < ActiveRecord::Migration[5.0]
       t.string :status
       t.text :description
       t.string :link
-      
+      t.string :introduction_date
+
       t.timestamps
     end
   end

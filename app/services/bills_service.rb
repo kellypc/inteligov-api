@@ -3,17 +3,17 @@ require "mechanize"
 class BillsService
   BASE_URL = "https://sapl.al.ac.leg.br/materia"
 
-  attr_accessor :agent, :url, :project_id, :page
+  attr_accessor :agent, :url, :bill_id, :page
 
-  def initialize(project_id)
+  def initialize(bill_id)
     @agent = Mechanize.new { |agent| agent.user_agent_alias = "Mac Safari" }
-    @url = "#{BASE_URL}/#{project_id}"
+    @url = "#{BASE_URL}/#{bill_id}"
     @page = agent.get(url)
   end
 
-  def get_new_project
+  def get_new_bill
     {
-      "ext_id": project_id,
+      "ext_id": bill_id,
       "author": get_author,
       "kind": get_kind,
       "number": get_number,
