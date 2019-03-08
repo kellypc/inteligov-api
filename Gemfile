@@ -10,6 +10,8 @@ ruby '2.5.1'
 gem 'rails', '5.2.1'
 gem 'pg', '>= 0.18', '< 2.0'
 gem 'puma', '~> 3.0'
+gem 'mechanize'
+gem 'nokogiri'
 
 group :development, :test do
   gem 'byebug', platform: :mri
