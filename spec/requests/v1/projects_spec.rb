@@ -20,7 +20,7 @@ RSpec.describe 'Projects API' do
 
   describe 'GET /new' do
     before do
-      get "/api/v1/projects/new", params: { project: {ext_id: "12345"} }
+      get "/api/v1/projects/new", params: { project: {ext_id: "4059"} }
     end
 
     it 'returns status as ok' do
@@ -28,7 +28,8 @@ RSpec.describe 'Projects API' do
     end
 
     it 'returns the json for project' do
-      expect(json_response[:author]).to eq("Nome Author")
+      expect(json_response[:author]).to eq("Governo - Governador")
+      expect(json_response[:kind]).to eq("Projeto de Lei")
     end
   end
 

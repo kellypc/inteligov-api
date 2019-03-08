@@ -2,19 +2,18 @@ module Api::V1
   class ProjectsController < ApplicationController
     before_action :set_project, only: [:show, :update, :destroy]
 
-    # GET /projects
     def index
       @projects = Project.order(:id)
 
       render json: @projects
     end
 
-    # GET /projects/1
-    def show
-      render json: @project
+    def new
+      new_project = BillsService.new(project_params[:ext_id]).get_new_project
+
+      render json: new_project
     end
 
-    # POST /projects
     def create
       @project = Project.new(project_params)
 
@@ -25,29 +24,17 @@ module Api::V1
       end
     end
 
-    # PATCH/PUT /projects/1
-    def update
-      if @project.update(project_params)
-        render json: @project
-      else
-        render json: @project.errors, status: :unprocessable_entity
-      end
-    end
-
-    # DELETE /projects/1
     def destroy
       @project.destroy
     end
 
     private
-      # Use callbacks to share common setup or constraints between actions.
       def set_project
         @project = Project.find(params[:id])
       end
 
-      # Only allow a trusted parameter "white project" through.
       def project_params
-        params.require(:project).permit(:title, :excerpt, :description, :upvotes)
+        params.require(:project).permit(:ext_id)
       end
   end
 end
