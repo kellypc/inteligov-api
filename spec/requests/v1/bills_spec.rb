@@ -1,26 +1,42 @@
 require 'rails_helper'
 
 RSpec.describe 'Bills API' do
+  let(:current_user) { FactoryBot.create(:user)}
+  let(:headers) { get_headers }
 
   describe 'GET /bills' do
     let!(:bill) { FactoryBot.create(:bill) }
 
-    before do
-      get '/api/v1/bills', params: {}
+    context "when the user isn't authenticated" do
+      before do
+        get '/api/v1/bills', params: {}
+      end
+
+      it "returns an unauthorized response" do
+        expect(response.status).to eq(401)
+      end
     end
 
-    it 'returns status as ok' do
-      expect(response).to have_http_status(:ok)
-    end
+    context "when the user is authenticated" do
+      before do
+        login(current_user)
+        get '/api/v1/bills', params: {}, headers: headers
+      end
 
-    it 'returns 1 bill from database' do
-      expect(json_response.count).to eq 1
+      it 'returns status as ok' do
+        expect(response).to have_http_status(:ok)
+      end
+
+      it 'returns 1 bill from database' do
+        expect(json_response.count).to eq 1
+      end
     end
   end
 
   describe 'GET /new' do
     before do
-      get "/api/v1/bills/new", params: { bill: {ext_id: "4059"} }
+      login(current_user)
+      get "/api/v1/bills/new", params: { bill: {ext_id: "4059"} }, headers: headers
     end
 
     it 'returns status as ok' do

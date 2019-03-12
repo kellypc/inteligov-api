@@ -12,6 +12,7 @@ gem 'pg', '>= 0.18', '< 2.0'
 gem 'puma', '~> 3.0'
 gem 'mechanize'
 gem 'nokogiri'
+gem 'devise_token_auth'
 
 group :development, :test do
   gem 'byebug', platform: :mri

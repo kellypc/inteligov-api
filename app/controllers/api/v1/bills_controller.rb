@@ -1,5 +1,6 @@
 module Api::V1
   class BillsController < ApplicationController
+    before_action :authenticate_api_user!
     before_action :set_bill, only: [:show, :update, :destroy]
 
     def index
