@@ -5,7 +5,7 @@ RSpec.describe 'Bills API' do
   let(:headers) { get_headers }
 
   describe 'GET /bills' do
-    let!(:bill) { FactoryBot.create(:bill) }
+    let!(:bill) { FactoryBot.create(:bill, user: current_user) }
 
     context "when the user isn't authenticated" do
       before do

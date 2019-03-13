@@ -4,7 +4,7 @@ module Api::V1
     before_action :set_bill, only: [:show, :update, :destroy]
 
     def index
-      @bills = Bill.order(:id)
+      @bills = current_api_user.bills.order(:id)
 
       render json: @bills
     end
@@ -12,13 +12,14 @@ module Api::V1
     def new
       new_bill = BillsService.new(bill_params[:ext_id]).get_new_bill
 
-      Bill.create(new_bill.except(:steps))
+      current_api_user.bills.create(new_bill.except(:steps))
 
       render json: new_bill
     end
 
     def create
       @bill = Bill.new(bill_params)
+      @bill.user = current_api_user
 
       if @bill.save
         render json: @bill, status: :created
@@ -33,7 +34,7 @@ module Api::V1
 
     private
       def set_bill
-        @bill = Bill.find(params[:id])
+        @bill = current_api_user.bills.find(params[:id])
       end
 
       def bill_params
